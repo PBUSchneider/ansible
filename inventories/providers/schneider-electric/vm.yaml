@@ -1,0 +1,170 @@
+# This inventory describes a virtual machine that will be deployed on a SEAPATH
+# cluster or standalone machine.
+# It gives two examples, the first on a critical (real-time) VM and the second
+# on a standard VM.
+#
+# Be careful that SEAPATH only handles how to deploy and run the virtual machine.
+# It does not handle any virtual machine inner configuration.
+#
+# Replace all the TODOs to fit your physical machines.
+# More informations on SEAPATH Wiki:
+# - General inventory : https://lf-energy.atlassian.net/wiki/x/lIblAQ
+# - guest.xml.j2 templated xml file : https://lf-energy.atlassian.net/wiki/x/ao3lAQ
+# CHANGELOG :
+# 05/08/2025 : Add 3 more network interfaces for processbus
+
+---
+VMs:
+  hosts:
+    vmc7446:
+      name: "vmc7446"
+      uuid: "e6cea4b7-5482-43ec-9b41-bfb3fdde7794"
+      vm_template: "vm_template.j2" # TODO: Replace with your template
+      vm_disk: "vm_images/vmc7-0.1.0-446.qcow2" # TODO : Replace with your image name
+      # Connection test part. Remove if your vm has no ssh connection
+      #ansible_host: 192.168.100.11 # TODO : Put the IP of your VM
+      #wait_for_connection: true
+      # Configuration part. These variables only work with the guest.xml.j2 template
+      vm_features: ["rt", "isolated"] # features for real time VM with secure boot disabled
+      cpuset: [2-11] # TODO : Replace by the hypervisor cpu you want to pin your VM on.
+      bridges:
+        - name: "br0"
+          mac_address: "54:99:15:98:33:02"
+          target: vmc7_mbus
+          pci:
+            domain: '0x0000'
+            bus: '0x0a'
+            slot: '0x00'
+            function: '0x0'
+            
+        - name: "brPBUS"
+          mac_address: "54:99:15:98:33:03"
+          target: vmc7_pbus
+          pci:
+            domain: '0x0000'
+            bus: '0x0b'
+            slot: '0x00'
+            function: '0x0'
+          vlan:
+            - vlan_tag: 101
+            - vlan_tag: 102
+            - vlan_tag: 103
+            - vlan_tag: 104
+            - vlan_tag: 105
+            - vlan_tag: 106
+            - vlan_tag: 107
+          type: 'openvswitch'
+          interfaceid: 'b89e7964-9eb3-4728-b603-071e5e0f5215'
+
+        - name: "brSBUS"
+          mac_address: "54:99:15:98:33:04"
+          target: vmc7_sbus
+          pci:
+            domain: '0x0000'
+            bus: '0x0c'
+            slot: '0x00'
+            function: '0x0'
+          type: 'openvswitch'
+          interfaceid: 'a9d2d712-8e49-4492-97b9-d3aa0dd98d1e'
+
+
+        - name: "brPBUS"
+          mac_address: "54:99:15:98:99:01"
+          target: vmc7_pbus_c1
+          pci:
+            domain: '0x0000'
+            bus: '0x11'
+            slot: '0x00'
+            function: '0x0'
+          vlan:
+            - vlan_tag: 101
+            - vlan_tag: 301
+          type: 'openvswitch'
+          interfaceid: '17cefd94-902d-4554-82da-554b55fee619'
+
+        - name: "brPBUS"
+          mac_address: "54:99:15:98:99:02"
+          target: vmc7_pbus_c2
+          vlan:
+            - vlan_tag: 102
+            - vlan_tag: 302
+          pci:
+            domain: '0x0000'
+            bus: '0x12'
+            slot: '0x00'
+            function: '0x0'
+          type: 'openvswitch'
+          interfaceid: '17a6cbd6-a5e5-49cc-9d43-ddb8255d2e08'
+
+        - name: "brPBUS"
+          mac_address: "54:99:15:98:99:03"
+          target: vmc7_pbus_c3
+          vlan:
+            - vlan_tag: 103
+            - vlan_tag: 303
+          pci:
+            domain: '0x0000'
+            bus: '0x13'
+            slot: '0x00'
+            function: '0x0'
+          type: 'openvswitch'
+          interfaceid: 'ec3cb5f2-1b0d-4e40-a0f7-95e8c9633a24'
+
+        - name: "brPBUS"
+          mac_address: "54:99:15:98:99:04"
+          target: vmc7_pbus_c4
+          vlan:
+            - vlan_tag: 104
+            - vlan_tag: 304
+          pci:
+            domain: '0x0000'
+            bus: '0x14'
+            slot: '0x00'
+            function: '0x0'
+          type: 'openvswitch'
+          interfaceid: 'f2220a74-ef66-4bcd-bd3e-50f5cd748657'
+
+        - name: "brPBUS"
+          mac_address: "54:99:15:98:99:05"
+          target: vmc7_pbus_c5
+          vlan:
+            - vlan_tag: 105
+            - vlan_tag: 305
+          pci:
+            domain: '0x0000'
+            bus: '0x15'
+            slot: '0x00'
+            function: '0x0'
+          type: 'openvswitch'
+          interfaceid: '1140a9bb-9df3-41b1-962e-b232f946eaba'
+
+        - name: "brPBUS"
+          mac_address: "54:99:15:98:99:06"
+          target: vmc7_pbus_c6
+          vlan:
+            - vlan_tag: 106
+            - vlan_tag: 306
+          pci:
+            domain: '0x0000'
+            bus: '0x16'
+            slot: '0x00'
+            function: '0x0'
+          type: 'openvswitch'
+          interfaceid: 'b00ed9ee-8bbf-4f0a-ae92-d5827b7d1f97'
+
+        - name: "brPBUS"
+          mac_address: "54:99:15:98:99:07"
+          target: vmc7_pbus_c7
+          vlan:
+            - vlan_tag: 107
+            - vlan_tag: 307
+          pci:
+            domain: '0x0000'
+            bus: '0x17'
+            slot: '0x00'
+            function: '0x0'
+          type: 'openvswitch'
+          interfaceid: 'eed47fb1-20f1-42a5-96ea-8d49deb308ca'
+
+  vars:
+    ansible_user: ansible # Only for connection test

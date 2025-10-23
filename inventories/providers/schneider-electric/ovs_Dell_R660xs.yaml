@@ -1,0 +1,22 @@
+# This inventory describes an extended OVS bridge over the SEAPATH cluster
+# It allows the VM to communicate even after a live migration.
+# It is not required for a SEAPATH cluster to work, it is given only as example
+# of the capabilities
+
+---
+standalone_machine:
+  children:
+    hypervisors:
+      vars:
+        ovs_bridges:
+          - name: brPBUS
+            ports:
+              - name: PBUS_ext
+                type: system
+                interface: "eno8403"
+
+          - name: brSBUS
+            ports:
+              - name: SBUS_ext
+                type: system
+                interface: "eno12399"

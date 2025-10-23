@@ -1,0 +1,79 @@
+# This inventory describes a standalone SEAPATH machine (no cluster)
+# It contains all required variables to configure and run your standalone machine.
+# Replace all the TODOs to fit your physical machines.
+# More informations on SEAPATH Wiki: https://lf-energy.atlassian.net/wiki/x/lIblAQ
+
+---
+standalone_machine:
+  children:
+    hypervisors:
+      hosts:
+        std1:
+          # Admin network settings
+          ansible_host: 192.168.100.31
+          brPBUS_ip: 10.174.20.1
+          brSBUS_ip: 10.174.10.1
+          network_interface: eno8303
+          # PTP configuration.
+          # Optional, remove if the machine is not synchronised with PTP
+          ptp_interface: "eno12409"
+          upload_files: # This file is a hook script run at vm start/stop/migrate
+            - src: '../files/qemu'
+              dest: '/etc/libvirt/hooks/'
+              mode: "0744"
+
+      vars:
+        deploy_vms_standalone_qcow2tmpuploadfolder: /var/tmp
+  vars:
+    # Ansible vars
+    ansible_connection: ssh
+    ansible_python_interpreter: /usr/bin/python3
+    ansible_remote_tmp: /tmp/.ansible/tmp
+    ansible_user: admin # TODO: Put the name of your ansible user
+    # By default, this user is "ansible" on Debian and "admin" on Yocto
+
+    # Debian specific, remove if you use Yocto
+    admin_user: admin
+    isolcpus: "2-11" # TODO : Put the list of cpus to isolate.
+    grub_append: "default_hugepagesz=1G hugepagesz=1G hugepages=12"
+      # This variable is only used on Debian.
+      # On Yocto, it is configured in yocto-bsp
+
+    # Main network configuration
+    gateway_addr: "192.168.100.250" # TODO : Put your gatway address
+    dns_servers: "192.168.100.250" # TODO : Put your dns address
+    ip_addr: "{{ ansible_host }}"
+    subnet: 24
+    apply_network_config: true
+    # List of interfaces to wait for before considering the network as up.
+    # With the default network configuration, it should be "br0"
+    interfaces_to_wait_for:
+      - "eno8303"
+    # systemd-networkd is used by default to configure the network
+    # netplan can also be used to sum up complex network in one yaml file
+    # See the wiki for more informations : TODO put link
+
+    # NTP time synchronisation
+    ntp_servers:
+      - "192.168.100.250" # local ntp server
+
+    # Hardening (Debian only)
+    # TODO : Put the password hash for the grub password
+    # It can be generated with the following command: grub-mkpasswd-pbkdf2
+    grub_password: grub.pbkdf2.sha512.10000.666FF16D5587509B2B3340B2388CB798BEF9553A9666CECA6282E0D822C1529F94AF693CC6738C1F757B868D8090F24FD48D8F56486C70C545D559CB4BAAAA3E.9718E767036BDB71CC1B82BCFC906610F8772DD4757F6F075D82A23E70DA46FBED372A3E5143E5C2D40AA888C6B884E4AA437488D82008383C54ED79D68A42CF
+
+# ------------------------------------------------------------------------------
+# ----------------------- Empty groups, prevent warnings -----------------------
+# ------------------------------------------------------------------------------
+grafana-server:
+iscsigws:
+iscsi-gws:
+mdss:
+mgrs:
+nfss:
+rbdmirrors:
+rgwloadbalancers:
+rgws:
+cluster_machines:
+
+...

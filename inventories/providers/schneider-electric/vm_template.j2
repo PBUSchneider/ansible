@@ -1,0 +1,231 @@
+<domain type="{{ vm_domaine | default('kvm') }}">
+  <name>{{ vm.name }}</name>
+  <uuid>{{ vm.uuid }}</uuid>
+  <metadata>
+    <libosinfo:libosinfo xmlns:libosinfo="http://libosinfo.org/xmlns/libvirt/domain/1.0">
+      <libosinfo:os id="http://debian.org/debian/11"/>
+    </libosinfo:libosinfo>
+  </metadata>
+  <memory unit='GiB'>10</memory>
+  <currentMemory unit='GiB'>10</currentMemory>
+  <memoryBacking>
+    <hugepages/>
+    <locked/>
+    <source type='file'/>
+    <access mode='shared'/>
+    <allocation mode='immediate'/>
+    <discard/>
+  </memoryBacking>
+  <vcpu placement='static'>10</vcpu>
+  <iothreads>2</iothreads>
+  <cputune>
+    <vcpupin vcpu='0' cpuset='10'/>
+    <vcpupin vcpu='1' cpuset='11'/>
+    <vcpupin vcpu='2' cpuset='2'/>
+    <vcpupin vcpu='3' cpuset='3'/>
+    <vcpupin vcpu='4' cpuset='4'/>
+    <vcpupin vcpu='5' cpuset='5'/>
+    <vcpupin vcpu='6' cpuset='6'/>
+    <vcpupin vcpu='7' cpuset='7'/>
+    <vcpupin vcpu='8' cpuset='8'/>
+    <vcpupin vcpu='9' cpuset='9'/>
+    <emulatorsched scheduler='fifo' priority='1'/>
+    <vcpusched vcpus='2' scheduler='fifo' priority='1'/>
+    <vcpusched vcpus='3' scheduler='fifo' priority='1'/>
+    <vcpusched vcpus='4' scheduler='fifo' priority='1'/>
+    <vcpusched vcpus='5' scheduler='fifo' priority='1'/>
+    <vcpusched vcpus='6' scheduler='fifo' priority='1'/>
+    <vcpusched vcpus='7' scheduler='fifo' priority='1'/>
+    <vcpusched vcpus='8' scheduler='fifo' priority='1'/>
+    <vcpusched vcpus='9' scheduler='fifo' priority='1'/>
+  </cputune>
+  <os>
+    <type arch='x86_64' machine='pc-q35-7.2'>hvm</type>
+    <loader readonly='yes' secure='yes' type='pflash'>/usr/share/OVMF/OVMF_CODE_4M.secboot.fd</loader>
+    <nvram template='/usr/share/OVMF/OVMF_VARS_4M.ms.fd'>/var/lib/libvirt/qemu/nvram/vmc7-446.nvram</nvram>
+    <boot dev='hd'/>
+  </os>
+  <features>
+    <acpi/>
+    <apic/>
+    <pmu state='off'/>
+    <smm state='on'/>
+    <ioapic driver='qemu'/>
+  </features>
+  <cpu mode='host-passthrough' check='none' migratable='on'>
+    <topology sockets='1' dies='1' cores='10' threads='1'/>
+    <cache mode='passthrough'/>
+    <feature policy='require' name='tsc-deadline'/>
+  </cpu>
+  <clock offset='utc'>
+    <timer name='rtc' tickpolicy='catchup'/>
+    <timer name='pit' tickpolicy='delay'/>
+    <timer name='hpet' present='no'/>
+  </clock>
+  <on_poweroff>destroy</on_poweroff>
+  <on_reboot>restart</on_reboot>
+  <on_crash>destroy</on_crash>
+  <pm>
+    <suspend-to-mem enabled='no'/>
+    <suspend-to-disk enabled='no'/>
+  </pm>
+  <devices>
+    <emulator>/usr/bin/qemu-system-x86_64</emulator>
+    {% if 'standalone_machine' in groups and inventory_hostname in groups['standalone_machine'] %}
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2'/>
+      <source file='/var/lib/libvirt/images/{{ vm.name }}.qcow2'/>
+      <target dev='vda' bus='virtio'/>
+      <address type='pci' domain='0x0000' bus='0x04' slot='0x00' function='0x0'/>
+    </disk>   
+    {% endif %}
+    <controller type='usb' index='0' model='none'/>
+    
+    <controller type='pci' index='0' model='pcie-root'/>
+    <controller type='pci' index='1' model='pcie-root-port'>
+      <model name='pcie-root-port'/>
+      <target chassis='1' port='0x10'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x0' multifunction='on'/>
+    </controller>
+    <controller type='pci' index='2' model='pcie-root-port'>
+      <model name='pcie-root-port'/>
+      <target chassis='2' port='0x11'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x1'/>
+    </controller>
+    <controller type='pci' index='3' model='pcie-root-port'>
+      <model name='pcie-root-port'/>
+      <target chassis='3' port='0x12'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x2'/>
+    </controller>
+    <controller type='pci' index='4' model='pcie-root-port'>
+      <model name='pcie-root-port'/>
+      <target chassis='4' port='0x13'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x3'/>
+    </controller>
+    <controller type='pci' index='5' model='pcie-root-port'>
+      <model name='pcie-root-port'/>
+      <target chassis='5' port='0x14'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x4'/>
+    </controller>
+    <controller type='pci' index='6' model='pcie-root-port'>
+      <model name='pcie-root-port'/>
+      <target chassis='6' port='0x15'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x5'/>
+    </controller>
+    <controller type='pci' index='7' model='pcie-root-port'>
+      <model name='pcie-root-port'/>
+      <target chassis='7' port='0x16'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x6'/>
+    </controller>
+    <controller type='pci' index='8' model='pcie-root-port'>
+      <model name='pcie-root-port'/>
+      <target chassis='8' port='0x17'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x7'/>
+    </controller>
+    <controller type='pci' index='9' model='pcie-root-port'>
+      <model name='pcie-root-port'/>
+      <target chassis='9' port='0x18'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x0' multifunction='on'/>
+    </controller>
+    <controller type='pci' index='10' model='pcie-root-port'>
+      <model name='pcie-root-port'/>
+      <target chassis='10' port='0x19'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x1'/>
+    </controller>
+    <controller type='pci' index='11' model='pcie-root-port'>
+      <model name='pcie-root-port'/>
+      <target chassis='11' port='0x1a'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x2'/>
+    </controller>
+    <controller type='pci' index='12' model='pcie-root-port'>
+      <model name='pcie-root-port'/>
+      <target chassis='12' port='0x1b'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x3'/>
+    </controller>
+    <controller type='pci' index='13' model='pcie-root-port'>
+      <model name='pcie-root-port'/>
+      <target chassis='13' port='0x1c'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x4'/>
+    </controller>
+    <controller type='pci' index='14' model='pcie-root-port'>
+      <model name='pcie-root-port'/>
+      <target chassis='14' port='0x1d'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x5'/>
+    </controller>
+    <controller type='sata' index='0'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x1f' function='0x2'/>
+    </controller>
+    <controller type='virtio-serial' index='0'>
+      <address type='pci' domain='0x0000' bus='0x03' slot='0x00' function='0x0'/>
+    </controller>
+    {% if vm.bridges is defined %}
+{%     for bridge in vm.bridges %}
+    <interface type="bridge">
+        <source bridge="{{ bridge.name }}"/>       
+        {% if bridge.mac_address is defined %}
+        <mac address="{{ bridge.mac_address }}"/>
+        {% endif %}
+        <model type="virtio"/>
+{%         if bridge.pci is defined %}
+        <address type="pci" domain="{{ bridge.pci.domain }}" bus="{{ bridge.pci.bus }}" slot="{{ bridge.pci.slot }}" function="{{ bridge.pci.function }}"/>
+{%         endif %}
+{%         if bridge.target is defined %}
+        <target dev="{{ bridge.target }}"/>
+{%         endif %}
+{%         if bridge.type is defined %}
+        <virtualport type='{{ bridge.type }}'
+{%           if bridge.interfaceid is defined %}
+          >
+            <parameters interfaceid='{{ bridge.interfaceid }}'/>
+          </virtualport>
+{%           else %}
+          />
+{%           endif %}
+{%        endif %}
+{%         if bridge.vlan is defined %}
+        <vlan trunk='yes'>
+        {% for vlan in bridge.vlan %}
+          <tag id='{{ vlan.vlan_tag }}'/>
+        {%     endfor %}
+        </vlan>
+{%         endif %}
+        </interface>
+{%     endfor %}
+{% endif %}
+
+    <serial type='pty'>
+      <target type='isa-serial' port='0'>
+        <model name='isa-serial'/>
+      </target>
+    </serial>
+    <console type='pty'>
+      <target type='serial' port='0'/>
+    </console>
+    <channel type='unix'>
+      <target type='virtio' name='org.qemu.guest_agent.0'/>
+      <address type='virtio-serial' controller='0' bus='0' port='1'/>
+    </channel>
+    <input type='mouse' bus='ps2'/>
+    <input type='keyboard' bus='ps2'/>
+    <graphics type='vnc' port='-1' autoport='yes' keymap='fr' listen='0.0.0.0'>
+      <listen type='address' address='0.0.0.0'/>
+    </graphics>
+    <audio id='1' type='none'/>
+    <video>
+      <model type='virtio' heads='1' primary='yes'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x0'/>
+    </video>
+    <watchdog model='i6300esb' action='reset'>
+      <address type='pci' domain='0x0000' bus='0x0f' slot='0x00' function='0x0'/>
+    </watchdog>
+    <memballoon model='none'/>
+    <rng model='virtio'>
+      <backend model='random'>/dev/urandom</backend>
+      <address type='pci' domain='0x0000' bus='0x06' slot='0x00' function='0x0'/>
+    </rng>
+    <iommu model='intel'>
+      <driver intremap='on' caching_mode='on' iotlb='off'/>
+    </iommu>
+  </devices>
+</domain>
+
